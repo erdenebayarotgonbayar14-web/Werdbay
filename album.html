@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Album — Erdenebayar</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Archivo:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="topbar mono">
+  <a href="index.html">← All albums</a>
+  <span id="counter"></span>
+</div>
+
+<div class="shell">
+  <main id="page"></main>
+
+  <footer class="site-foot mono">
+    <span id="footName"></span>
+    <a href="index.html">Back to albums</a>
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  var pad = function (n) { return String(n).padStart(3, "0"); };
+  var page = document.getElementById("page");
+  var counter = document.getElementById("counter");
+
+  document.getElementById("footName").textContent = SITE.name;
+
+  var slug = new URLSearchParams(window.location.search).get("a");
+  var album = ALBUMS.filter(function (x) { return x.slug === slug; })[0];
+
+  // ---- album not found ----------------------------------------------------
+  if (!album) {
+    page.innerHTML =
+      '<div class="notice"><h1>Album not found</h1>' +
+      '<p>That address does not match any album. Pick one from the list instead.</p>' +
+      '<p class="mono"><a href="index.html">← All albums</a></p></div>';
+    return;
+  }
+
+  document.title = album.title + " — " + SITE.name;
+
+  var photos = album.photos || [];
+
+  // ---- header: title, main description, specs -----------------------------
+  var specs = "";
+  if (album.year)  specs += '<div class="spec-item mono"><span>Year</span><span>' + album.year + '</span></div>';
+  if (album.place) specs += '<div class="spec-item mono"><span>Place</span><span>' + album.place + '</span></div>';
+  specs += '<div class="spec-item mono"><span>Frames</span><span>' + pad(photos.length) + '</span></div>';
+
+  var head = document.createElement("header");
+  head.className = "album-head";
+  head.innerHTML =
+    '<h1 class="album-title">' + album.title + '</h1>' +
+    '<div class="head-row">' +
+      '<p class="lede">' + (album.description || "") + '</p>' +
+      '<div class="specs">' + specs + '</div>' +
+    '</div>';
+  page.appendChild(head);
+
+  // ---- plates: number | photo | caption -----------------------------------
+  var plates = document.createElement("div");
+  plates.className = "plates";
+
+  if (!photos.length) {
+    plates.innerHTML =
+      '<div class="notice"><h1>No photos yet</h1>' +
+      '<p>Add image files to <code>photos/' + album.slug + '/</code> and list them in <code>data.js</code>.</p></div>';
+  }
+
+  photos.forEach(function (photo, i) {
+    var fig = document.createElement("figure");
+    fig.className = "plate";
+    fig.innerHTML =
+      '<div class="plate-no">' + pad(i + 1) + '</div>' +
+      '<div class="plate-pic">' +
+        '<img src="' + photo.src + '" alt="' + (photo.caption || album.title) + '" loading="lazy">' +
+      '</div>' +
+      '<figcaption>' + (photo.caption || "") + '</figcaption>';
+
+    var img = fig.querySelector("img");
+    img.addEventListener("error", function () {
+      var box = document.createElement("div");
+      box.className = "missing";
+      box.textContent = "Add " + photo.src;
+      img.replaceWith(box);
+    });
+
+    plates.appendChild(fig);
+  });
+
+  page.appendChild(plates);
+
+  // ---- live frame counter in the top bar ----------------------------------
+  counter.textContent = photos.length ? "001 / " + pad(photos.length) : album.title;
+
+  if (photos.length && "IntersectionObserver" in window) {
+    var all = Array.prototype.slice.call(plates.querySelectorAll(".plate"));
+    var seen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        all.forEach(function (p) { p.classList.remove("is-current"); });
+        entry.target.classList.add("is-current");
+        counter.textContent = pad(all.indexOf(entry.target) + 1) + " / " + pad(all.length);
+      });
+    }, { rootMargin: "-45% 0px -45% 0px" });
+
+    all.forEach(function (p) { seen.observe(p); });
+  }
+})();
+</script>
+</body>
+</html>
