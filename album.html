@@ -83,8 +83,8 @@
     fig.className = "plate";
     fig.innerHTML =
       '<div class="plate-no">' + pad(i + 1) + '</div>' +
-      '<div class="plate-pic">' +
-        '<img src="' + photo.src + '" alt="' + (photo.caption || album.title) + '" loading="lazy">' +
+      '<div class="plate-pic protect">' +
+        '<img src="' + photo.src + '" alt="' + (photo.caption || album.title) + '" loading="lazy" draggable="false">' +
       '</div>' +
       '<figcaption>' + (photo.caption || "") + '</figcaption>';
 
@@ -100,6 +100,14 @@
   });
 
   page.appendChild(plates);
+
+  // Зураг хуулбарлахаас сэргийлэх энгийн хамгаалалт
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target.closest(".protect")) e.preventDefault();
+  });
+  document.addEventListener("dragstart", function (e) {
+    if (e.target.closest(".protect")) e.preventDefault();
+  });
 
   // ---- live frame counter in the top bar ----------------------------------
   counter.textContent = photos.length ? "001 / " + pad(photos.length) : album.title;

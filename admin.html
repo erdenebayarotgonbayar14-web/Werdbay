@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow">
 <title>Админ — Erdenebayar</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
-/* Админ хуудасны тусдаа загвар. Нийтийн хуудсуудад нөлөөлөхгүй. */
 .admin { max-width: 62rem; margin: 0 auto; padding: 2rem var(--edge) 10rem; }
 
 .admin-head {
@@ -29,7 +28,7 @@
   font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 0 0 1.25rem;
 }
-.panel.hidden { display: none; }
+.panel.hidden, .hidden { display: none; }
 
 .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; }
 .fields.one { grid-template-columns: 1fr; }
@@ -37,13 +36,17 @@
 label { display: grid; gap: 0.35rem; font-family: var(--mono);
   font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
-input[type=text], input[type=password], input[type=email], textarea, select {
+input[type=text], input[type=password], textarea {
   font-family: var(--sans); font-size: 0.95rem; color: var(--ink);
   background: var(--paper-2); border: 1px solid var(--rule); border-radius: 0;
   padding: 0.6rem 0.7rem; width: 100%; text-transform: none; letter-spacing: 0;
 }
 textarea { min-height: 7rem; resize: vertical; line-height: 1.5; }
-input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight); outline-offset: 2px; }
+input:focus, textarea:focus { outline: 2px solid var(--safelight); outline-offset: 2px; }
+
+.check { display: flex; align-items: center; gap: 0.5rem; font-family: var(--mono);
+  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.check input { accent-color: var(--safelight); }
 
 .btn {
   font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -56,11 +59,9 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 1.25rem; }
-
-.hint { font-size: 0.85rem; color: var(--muted); max-width: 55ch; margin: 1rem 0 0; }
+.hint { font-size: 0.85rem; color: var(--muted); max-width: 58ch; margin: 1rem 0 0; }
 .hint code { font-family: var(--mono); font-size: 0.8em; }
 
-/* төслийн жагсаалт */
 .album-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
 .tab {
   font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
@@ -70,7 +71,6 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
 .tab.active { border-color: var(--ink); color: var(--ink); }
 .tab:hover { color: var(--safelight); }
 
-/* зургийн мөрүүд */
 .photo-row {
   display: grid; grid-template-columns: 5rem minmax(0, 1fr) auto;
   gap: 1rem; align-items: start; padding: 1rem 0; border-top: 1px solid var(--rule);
@@ -91,7 +91,6 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
 
 .cover-preview { width: 8rem; aspect-ratio: 4/5; object-fit: cover; background: var(--paper-2); }
 
-/* хадгалах мөр */
 .savebar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
   display: flex; justify-content: space-between; align-items: center; gap: 1rem;
@@ -99,7 +98,6 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
   background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(10px); border-top: 1px solid var(--rule);
 }
-.savebar.hidden { display: none; }
 
 .log {
   font-family: var(--mono); font-size: 0.7rem; line-height: 1.7; color: var(--muted);
@@ -114,52 +112,52 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
 
   <header class="admin-head">
     <h1>Админ</h1>
-    <span class="mono" id="status">Холбогдоогүй</span>
+    <span class="mono" id="status">Нэвтрээгүй</span>
   </header>
 
-  <!-- 1. Холболт -->
-  <section class="panel" id="connectPanel">
-    <h2>1 — GitHub холболт</h2>
+  <!-- Нэвтрэх -->
+  <section class="panel" id="loginPanel">
+    <h2>Нэвтрэх</h2>
     <div class="fields">
-      <label>Хэрэглэгчийн нэр (owner)
-        <input type="text" id="owner" placeholder="erdenebayar" autocomplete="off"></label>
-      <label>Repo нэр
-        <input type="text" id="repo" placeholder="portfolio" autocomplete="off"></label>
-      <label>Салбар (branch)
-        <input type="text" id="branch" value="main" autocomplete="off"></label>
-      <label>Хандалтын токен
-        <input type="password" id="token" placeholder="github_pat_..." autocomplete="off"></label>
+      <label>Нууц үг
+        <input type="password" id="pass" autocomplete="current-password"></label>
     </div>
     <div class="row">
-      <button class="btn" id="connectBtn">Холбогдох</button>
+      <button class="btn" id="loginBtn">Нэвтрэх</button>
+      <span class="check"><input type="checkbox" id="remember" checked> Энэ төхөөрөмжид сануулах</span>
     </div>
     <p class="hint">
-      Токеныг зөвхөн энэ цонхны түр санах ойд хадгална — хуудсыг хаахад устана, хаана ч бичигдэхгүй.
-      Токеноо хэн нэгэнд илгээж болохгүй. GitHub → Settings → Developer settings →
-      Fine-grained tokens дээрээс энэ repo-д <code>Contents: Read and write</code> эрх өгсөн
-      токен үүсгээрэй.
+      GitHub токен энэ хуудсанд байхгүй. Токен Netlify-н environment variable дотор,
+      серверийн талд хадгалагдана. Сануулах сонголтыг идэвхжүүлбэл зөвхөн нууц үг
+      хөтөч дотор үлдэх тул дараагийн удаа шууд орно. Хамтын компьютер дээр
+      сануулахгүй байхыг зөвлөе.
     </p>
   </section>
 
-  <!-- 2. Сайтын мэдээлэл -->
+  <!-- Холбоо барих -->
   <section class="panel hidden" id="sitePanel">
-    <h2>2 — Сайтын мэдээлэл</h2>
+    <h2>Холбоо барих ба сайтын мэдээлэл</h2>
     <div class="fields">
       <label>Нэр<input type="text" id="s_name"></label>
       <label>Чиглэл<input type="text" id="s_role"></label>
       <label>Байршил<input type="text" id="s_place"></label>
       <label>И-мэйл<input type="text" id="s_email"></label>
-      <label>Instagram<input type="text" id="s_instagram"></label>
-      <label>Instagram холбоос<input type="text" id="s_instagramUrl"></label>
+      <label>Утас<input type="text" id="s_phone"></label>
+      <label>Instagram нэр<input type="text" id="s_instagram" placeholder="@werdbay"></label>
+      <label>Instagram холбоос<input type="text" id="s_instagramUrl" placeholder="https://www.instagram.com/werdbay/"></label>
+      <label>Instagram товчны бичиг<input type="text" id="s_instagramLabel" placeholder="Instagram руу очих"></label>
     </div>
     <div class="fields one" style="margin-top:1rem">
       <label>Танилцуулга мөр<textarea id="s_intro" style="min-height:4.5rem"></textarea></label>
     </div>
   </section>
 
-  <!-- 3. Төслүүд -->
+  <!-- Төслүүд -->
   <section class="panel hidden" id="albumsPanel">
-    <h2>3 — Төслүүд</h2>
+    <h2>Төслүүд</h2>
+    <div class="row" style="margin:0 0 1.5rem">
+      <button class="btn" id="newAlbumBtn">+ Шинэ төсөл</button>
+    </div>
     <div class="album-tabs" id="tabs"></div>
 
     <div id="albumForm">
@@ -187,22 +185,23 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
       </div>
 
       <div class="row">
-        <button class="btn ghost" id="newAlbumBtn">+ Шинэ төсөл</button>
         <button class="btn ghost" id="upAlbumBtn">↑ Дээш зөөх</button>
-        <button class="btn ghost" id="delAlbumBtn">Төслийг жагсаалтаас хасах</button>
+        <button class="btn ghost" id="delAlbumBtn">Төслийг устгах</button>
       </div>
     </div>
   </section>
 
-  <!-- 4. Зурагнууд -->
+  <!-- Зурагнууд -->
   <section class="panel hidden" id="photosPanel">
-    <h2>4 — Зурагнууд ба тайлбар</h2>
+    <h2>Зурагнууд ба тайлбар</h2>
     <div class="row" style="margin-top:0">
       <input type="file" id="photoInput" accept="image/*" multiple hidden>
       <button class="btn" id="photoBtn">Зураг нэмэх</button>
       <span class="mono" id="photoCount"></span>
     </div>
     <div id="photoList"></div>
+    <p class="hint">2 МБ-аас том зургийг GitHub руу явуулахын өмнө автоматаар жижигрүүлнэ.
+      Түүнээс бага бол эх чанараар нь хэвээр хадгална.</p>
   </section>
 
   <pre class="log" id="log"></pre>
@@ -210,21 +209,20 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--safelight);
 
 <div class="savebar hidden" id="savebar">
   <button class="btn" id="saveBtn">GitHub рүү хадгалах</button>
-  <span class="mono" id="saveInfo">Хадгалаагүй өөрчлөлт байна</span>
+  <span class="mono" id="saveInfo"></span>
 </div>
 
 <script>
 (function () {
 "use strict";
 
-/* =========================================================================
-   Төлөв
-   ========================================================================= */
-var cfg   = { owner: "", repo: "", branch: "main", token: "" };
-var SITE  = {};
+var API = "/api/github";
+var MAX_BYTES = 2 * 1024 * 1024;   // 2 МБ
+
+var pass = "";
+var SITE = {};
 var ALBUMS = [];
-var sel   = 0;          // сонгосон төслийн дугаар
-var dataSha = null;     // data.js файлын одоогийн sha
+var sel = 0;
 
 var $ = function (id) { return document.getElementById(id); };
 
@@ -234,15 +232,13 @@ function log(msg, mark) {
   el.scrollTop = el.scrollHeight;
 }
 
-/* =========================================================================
-   Туслах функцууд
-   ========================================================================= */
+/* ---------- туслах ------------------------------------------------------- */
 function slugify(s) {
   return String(s).toLowerCase().trim()
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "album";
 }
 
-function encodeText(str) {                       // кирилл үсэг ч зөв кодлогдоно
+function encodeText(str) {
   var bytes = new TextEncoder().encode(str), bin = "";
   for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
@@ -264,58 +260,62 @@ function blobToBase64(blob) {
   });
 }
 
-/* Зургийг жижигрүүлж JPEG болгоно — repo хөнгөн, хуудас хурдан байлгах */
-async function toJpeg(file, maxSide, quality) {
+function kb(n) { return Math.round(n / 1024) + " КБ"; }
+
+/* ---------- зураг жижигрүүлэх -------------------------------------------- */
+async function encodeJpeg(file, maxSide, quality) {
   var bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
   var scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
   var w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
   var c = document.createElement("canvas");
   c.width = w; c.height = h;
   c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  bmp.close && bmp.close();
   return await new Promise(function (r) { c.toBlob(r, "image/jpeg", quality); });
 }
 
-/* =========================================================================
-   GitHub API
-   ========================================================================= */
-function gh(path, opts) {
-  opts = opts || {};
-  opts.headers = Object.assign({
-    "Authorization": "Bearer " + cfg.token,
-    "Accept": "application/vnd.github+json"
-  }, opts.headers || {});
-  return fetch("https://api.github.com/repos/" + cfg.owner + "/" + cfg.repo + path, opts);
+/* 2 МБ-аас бага бол хэвээр, том бол доош нь орох хүртэл шахна */
+async function prepare(file, hardMaxSide) {
+  var ext = (file.type === "image/png") ? "png"
+          : (file.type === "image/webp") ? "webp" : "jpg";
+
+  if (file.size <= MAX_BYTES && !hardMaxSide) {
+    return { blob: file, ext: ext, note: "эх чанараар (" + kb(file.size) + ")" };
+  }
+
+  var side = hardMaxSide || 2400, q = 0.85;
+  var blob = await encodeJpeg(file, side, q);
+
+  while (blob.size > MAX_BYTES && (q > 0.55 || side > 1200)) {
+    if (q > 0.6) q = Math.round((q - 0.1) * 100) / 100;
+    else side = Math.round(side * 0.8);
+    blob = await encodeJpeg(file, side, q);
+  }
+
+  return { blob: blob, ext: "jpg",
+    note: kb(file.size) + " → " + kb(blob.size) + " (" + side + "px)" };
 }
 
-async function getFile(path) {
-  var res = await gh("/contents/" + encodeURI(path) + "?ref=" + encodeURIComponent(cfg.branch));
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(path + " → " + res.status + " " + (await res.text()));
-  return await res.json();
-}
-
-async function putFile(path, base64, message, sha) {
-  var body = { message: message, content: base64, branch: cfg.branch };
-  if (sha) body.sha = sha;
-  var res = await gh("/contents/" + encodeURI(path), {
-    method: "PUT",
+/* ---------- сервертэй ярих ------------------------------------------------ */
+async function call(payload) {
+  payload.password = pass;
+  var res = await fetch(API, {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+    body: JSON.stringify(payload)
   });
-  if (!res.ok) throw new Error(path + " → " + res.status + " " + (await res.text()));
-  return await res.json();
+  var data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new Error((data && data.error) || ("Алдаа " + res.status));
+  return data;
 }
 
-/* =========================================================================
-   data.js унших / бичих
-   ========================================================================= */
 function parseDataJs(src) {
-  var out = new Function(
+  return new Function(
     src + "\nreturn {" +
     "SITE: typeof SITE !== 'undefined' ? SITE : null," +
     "ALBUMS: typeof ALBUMS !== 'undefined' ? ALBUMS : []};"
   )();
-  return out;
 }
 
 function buildDataJs() {
@@ -334,60 +334,66 @@ function buildDataJs() {
          "const ALBUMS = " + JSON.stringify(clean, null, 2) + ";\n";
 }
 
-/* =========================================================================
-   Холбогдох
-   ========================================================================= */
-$("connectBtn").addEventListener("click", async function () {
-  cfg.owner  = $("owner").value.trim();
-  cfg.repo   = $("repo").value.trim();
-  cfg.branch = $("branch").value.trim() || "main";
-  cfg.token  = $("token").value.trim();
+/* ---------- нэвтрэх ------------------------------------------------------- */
+async function login(password, remember) {
+  pass = password;
+  var info = await call({ action: "auth" });
 
-  if (!cfg.owner || !cfg.repo || !cfg.token) {
-    log("Owner, repo, токен гурвыг бөглөнө үү.", true);
-    return;
+  if (remember) { try { localStorage.setItem("pf_admin_pass", password); } catch (e) {} }
+
+  $("status").textContent = info.owner + "/" + info.repo + " · " + info.branch;
+  $("loginPanel").classList.add("hidden");
+  ["sitePanel", "albumsPanel", "photosPanel", "savebar"].forEach(function (id) {
+    $(id).classList.remove("hidden");
+  });
+
+  var file = await call({ action: "get", path: "data.js" });
+  if (file.found) {
+    var parsed = parseDataJs(decodeText(file.content));
+    SITE = parsed.SITE || {};
+    ALBUMS = parsed.ALBUMS || [];
+    log("data.js уншлаа — " + ALBUMS.length + " төсөл.");
+  } else {
+    SITE = { name: "", role: "Photography", place: "", email: "", phone: "",
+             instagram: "", instagramUrl: "", instagramLabel: "Instagram руу очих", intro: "" };
+    ALBUMS = [];
+    log("data.js олдсонгүй — шинээр үүсгэнэ.");
   }
 
-  $("connectBtn").disabled = true;
-  $("status").textContent = "Холбогдож байна…";
+  fillSite();
+  sel = 0;
+  render();
+}
 
-  try {
-    var file = await getFile("data.js");
-
-    if (file) {
-      dataSha = file.sha;
-      var parsed = parseDataJs(decodeText(file.content));
-      SITE = parsed.SITE || {};
-      ALBUMS = parsed.ALBUMS || [];
-      log("data.js уншлаа — " + ALBUMS.length + " төсөл.");
-    } else {
-      dataSha = null;
-      SITE = { name: "", role: "Photography", place: "", email: "", instagram: "", instagramUrl: "", intro: "" };
-      ALBUMS = [];
-      log("data.js олдсонгүй — шинээр үүсгэнэ.");
-    }
-
-    $("status").textContent = cfg.owner + "/" + cfg.repo + " · " + cfg.branch;
-    $("sitePanel").classList.remove("hidden");
-    $("albumsPanel").classList.remove("hidden");
-    $("photosPanel").classList.remove("hidden");
-    $("savebar").classList.remove("hidden");
-
-    fillSite();
-    sel = 0;
-    render();
-  } catch (e) {
-    $("status").textContent = "Холбогдож чадсангүй";
-    log("Алдаа: " + e.message, true);
-  } finally {
-    $("connectBtn").disabled = false;
-  }
+$("loginBtn").addEventListener("click", async function () {
+  var v = $("pass").value;
+  if (!v) return;
+  this.disabled = true;
+  try { await login(v, $("remember").checked); }
+  catch (e) { log(e.message, true); $("status").textContent = "Нэвтэрч чадсангүй"; }
+  finally { this.disabled = false; }
 });
 
-/* =========================================================================
-   Сайтын мэдээлэл
-   ========================================================================= */
-var siteKeys = ["name", "role", "place", "email", "instagram", "instagramUrl", "intro"];
+$("pass").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") $("loginBtn").click();
+});
+
+/* сануулсан нууц үгээр шууд орох */
+(async function auto() {
+  var saved = null;
+  try { saved = localStorage.getItem("pf_admin_pass"); } catch (e) {}
+  if (!saved) return;
+  $("status").textContent = "Нэвтэрч байна…";
+  try { await login(saved, true); }
+  catch (e) {
+    try { localStorage.removeItem("pf_admin_pass"); } catch (e2) {}
+    $("status").textContent = "Нууц үгээ дахин оруулна уу";
+  }
+})();
+
+/* ---------- холбоо барих -------------------------------------------------- */
+var siteKeys = ["name", "role", "place", "email", "phone",
+                "instagram", "instagramUrl", "instagramLabel", "intro"];
 
 function fillSite() {
   siteKeys.forEach(function (k) { $("s_" + k).value = SITE[k] || ""; });
@@ -396,15 +402,23 @@ siteKeys.forEach(function (k) {
   $("s_" + k).addEventListener("input", function () { SITE[k] = this.value; });
 });
 
-/* =========================================================================
-   Төслүүд
-   ========================================================================= */
+/* ---------- төслүүд ------------------------------------------------------- */
 function current() { return ALBUMS[sel]; }
 
 function render() {
-  // табууд
   var tabs = $("tabs");
   tabs.innerHTML = "";
+
+  if (!ALBUMS.length) {
+    tabs.innerHTML = '<span class="mono">Төсөл алга — “Шинэ төсөл” дар</span>';
+    $("albumForm").classList.add("hidden");
+    $("photosPanel").classList.add("hidden");
+    return;
+  }
+
+  $("albumForm").classList.remove("hidden");
+  $("photosPanel").classList.remove("hidden");
+
   ALBUMS.forEach(function (a, i) {
     var b = document.createElement("button");
     b.className = "tab" + (i === sel ? " active" : "");
@@ -412,11 +426,6 @@ function render() {
     b.addEventListener("click", function () { sel = i; render(); });
     tabs.appendChild(b);
   });
-
-  var has = ALBUMS.length > 0;
-  $("albumForm").style.display = has ? "" : "none";
-  $("photosPanel").style.display = has ? "" : "none";
-  if (!has) { tabs.innerHTML = '<span class="mono">Төсөл алга — “Шинэ төсөл” дар</span>'; renderNew(); return; }
 
   var a = current();
   $("a_title").value = a.title || "";
@@ -430,69 +439,66 @@ function render() {
   cp.alt = a.title || "";
 
   renderPhotos();
-  renderNew();
-}
-
-function renderNew() {
-  // “Шинэ төсөл” товч жагсаалт хоосон үед ч ажиллах ёстой
-  $("newAlbumBtn").style.display = "";
 }
 
 [["a_title", "title"], ["a_slug", "slug"], ["a_year", "year"],
  ["a_place", "place"], ["a_description", "description"]].forEach(function (pair) {
   $(pair[0]).addEventListener("input", function () {
     if (!current()) return;
-    current()[pair[1]] = pair[1] === "slug" ? slugify(this.value) : this.value;
+    current()[pair[1]] = this.value;
     if (pair[1] === "title") render();
   });
 });
 
-$("a_slug").addEventListener("blur", function () { this.value = slugify(this.value); });
+$("a_slug").addEventListener("blur", function () {
+  if (!current()) return;
+  current().slug = slugify(this.value);
+  this.value = current().slug;
+});
 
 $("newAlbumBtn").addEventListener("click", function () {
   ALBUMS.unshift({
-    slug: "shine-tusul-" + Date.now().toString(36),
+    slug: "tusul-" + Date.now().toString(36),
     title: "Шинэ төсөл", year: String(new Date().getFullYear()),
     place: "", cover: "", description: "", photos: []
   });
   sel = 0;
   render();
+  $("a_title").focus();
+  $("a_title").select();
 });
 
 $("upAlbumBtn").addEventListener("click", function () {
   if (sel === 0) return;
-  var a = ALBUMS.splice(sel, 1)[0];
-  ALBUMS.splice(sel - 1, 0, a);
+  ALBUMS.splice(sel - 1, 0, ALBUMS.splice(sel, 1)[0]);
   sel -= 1;
   render();
 });
 
 $("delAlbumBtn").addEventListener("click", function () {
   if (!current()) return;
-  if (!confirm("“" + (current().title || "энэ төсөл") + "”-ийг жагсаалтаас хасах уу?\n" +
+  if (!confirm("“" + (current().title || "энэ төсөл") + "”-ийг устгах уу?\n" +
                "Зургийн файлууд GitHub дээр хэвээр үлдэнэ.")) return;
   ALBUMS.splice(sel, 1);
   sel = Math.max(0, sel - 1);
   render();
 });
 
-/* --- нүүр зураг --- */
 $("coverBtn").addEventListener("click", function () { $("coverInput").click(); });
 
 $("coverInput").addEventListener("change", async function () {
   var f = this.files[0];
   if (!f || !current()) return;
   var a = current();
-  a._coverFile = await toJpeg(f, 1600, 0.82);
-  a._coverPreview = URL.createObjectURL(a._coverFile);
-  log("Нүүр зураг бэлэн — хадгалахад GitHub руу орно.");
+  var r = await prepare(f, 1600);
+  a._coverFile = r.blob; a._coverExt = r.ext;
+  a._coverPreview = URL.createObjectURL(r.blob);
+  log("Нүүр зураг: " + r.note);
   this.value = "";
   render();
 });
 
-/* =========================================================================
-   Зурагнууд
-   ========================================================================= */
+/* ---------- зурагнууд ----------------------------------------------------- */
 $("photoBtn").addEventListener("click", function () { $("photoInput").click(); });
 
 $("photoInput").addEventListener("change", async function () {
@@ -500,23 +506,26 @@ $("photoInput").addEventListener("change", async function () {
   if (!a) return;
   a.photos = a.photos || [];
   var files = Array.prototype.slice.call(this.files);
+  this.value = "";
   log("Зураг бэлдэж байна… (" + files.length + ")");
+
   for (var i = 0; i < files.length; i++) {
-    var blob = await toJpeg(files[i], 2400, 0.82);
+    var r = await prepare(files[i]);
     a.photos.push({
       src: "", caption: "",
-      _file: blob,
-      _preview: URL.createObjectURL(blob),
+      _file: r.blob, _ext: r.ext,
+      _preview: URL.createObjectURL(r.blob),
       _name: files[i].name.replace(/\.[^.]+$/, "")
     });
+    log("  " + files[i].name + " — " + r.note);
+    renderPhotos();
   }
-  this.value = "";
-  log("Бэлэн боллоо. Тайлбараа бичээд “GitHub рүү хадгалах” дар.");
-  render();
+  log("Бэлэн. Тайлбараа бичээд хадгална уу.");
 });
 
 function renderPhotos() {
   var a = current();
+  if (!a) return;
   var list = $("photoList");
   list.innerHTML = "";
   var photos = a.photos || [];
@@ -525,8 +534,8 @@ function renderPhotos() {
   photos.forEach(function (p, i) {
     var row = document.createElement("div");
     row.className = "photo-row";
-
     var thumb = p._preview || p.src;
+
     row.innerHTML =
       (thumb ? '<img src="' + thumb + '" alt="">' : '<div class="noimg"></div>') +
       '<div>' +
@@ -560,16 +569,13 @@ function renderPhotos() {
   });
 }
 
-/* =========================================================================
-   Хадгалах — зургууд эхэлж, дараа нь data.js
-   ========================================================================= */
+/* ---------- хадгалах ------------------------------------------------------ */
 $("saveBtn").addEventListener("click", async function () {
   var btn = this;
   btn.disabled = true;
   $("saveInfo").textContent = "Хадгалж байна…";
 
   try {
-    // 1) slug давхцахгүй байх
     var seen = {};
     ALBUMS.forEach(function (a) {
       a.slug = slugify(a.slug || a.title);
@@ -577,16 +583,16 @@ $("saveBtn").addEventListener("click", async function () {
       seen[a.slug] = true;
     });
 
-    // 2) шинэ зургуудыг хуулах
     for (var i = 0; i < ALBUMS.length; i++) {
       var a = ALBUMS[i];
 
       if (a._coverFile) {
-        var cpath = "photos/" + a.slug + "/cover-" + Date.now().toString(36) + ".jpg";
+        var cpath = "photos/" + a.slug + "/cover-" + Date.now().toString(36) + "." + (a._coverExt || "jpg");
         log("↑ " + cpath);
-        await putFile(cpath, await blobToBase64(a._coverFile), "Нүүр зураг: " + a.slug);
+        await call({ action: "put", path: cpath,
+          content: await blobToBase64(a._coverFile), message: "Нүүр зураг: " + a.slug });
         a.cover = cpath;
-        delete a._coverFile; delete a._coverPreview;
+        delete a._coverFile; delete a._coverPreview; delete a._coverExt;
       }
 
       var photos = a.photos || [];
@@ -594,25 +600,27 @@ $("saveBtn").addEventListener("click", async function () {
         var p = photos[j];
         if (!p._file) continue;
         var base = slugify(p._name || ("photo-" + (j + 1)));
-        var ppath = "photos/" + a.slug + "/" + base + "-" + Date.now().toString(36) + ".jpg";
+        var ppath = "photos/" + a.slug + "/" + base + "-" + Date.now().toString(36) + "." + (p._ext || "jpg");
         log("↑ " + ppath);
-        await putFile(ppath, await blobToBase64(p._file), "Зураг: " + a.slug);
+        await call({ action: "put", path: ppath,
+          content: await blobToBase64(p._file), message: "Зураг: " + a.slug });
         p.src = ppath;
-        delete p._file; delete p._preview; delete p._name;
+        delete p._file; delete p._preview; delete p._name; delete p._ext;
       }
     }
 
-    // 3) data.js бичих (хамгийн сүүлийн sha-г шинэчилж авна)
-    var existing = await getFile("data.js");
-    dataSha = existing ? existing.sha : null;
-    await putFile("data.js", encodeText(buildDataJs()), "Төслийн мэдээлэл шинэчлэв", dataSha);
+    var existing = await call({ action: "get", path: "data.js" });
+    await call({ action: "put", path: "data.js",
+      content: encodeText(buildDataJs()),
+      message: "Төслийн мэдээлэл шинэчлэв",
+      sha: existing.found ? existing.sha : null });
 
     log("Бүгд хадгалагдлаа.", true);
-    $("saveInfo").textContent = "Хадгалсан — GitHub Pages 1–2 минутын дараа шинэчлэгдэнэ";
+    $("saveInfo").textContent = "Хадгалсан — сайт 1–2 минутын дараа шинэчлэгдэнэ";
     render();
   } catch (e) {
     log("Алдаа: " + e.message, true);
-    $("saveInfo").textContent = "Хадгалахад алдаа гарлаа";
+    $("saveInfo").textContent = "Алдаа гарлаа";
   } finally {
     btn.disabled = false;
   }

@@ -19,7 +19,10 @@
     <h1 class="wordmark" id="wordmark">Erdenebayar</h1>
     <div class="masthead-foot">
       <p class="intro" id="intro"></p>
-      <div class="contact mono" id="contact"></div>
+      <div class="contact-block">
+        <div class="contact mono" id="contact"></div>
+        <a class="ig-btn" id="igBtn" href="#" target="_blank" rel="noopener">Instagram</a>
+      </div>
     </div>
   </header>
 
@@ -46,10 +49,20 @@
   document.getElementById("intro").textContent = SITE.intro;
   document.title = SITE.name + " — " + SITE.role;
 
-  document.getElementById("contact").innerHTML =
-    '<span>' + SITE.place + '</span>' +
-    '<span><a href="mailto:' + SITE.email + '">' + SITE.email + '</a></span>' +
-    '<span><a href="' + SITE.instagramUrl + '" rel="noopener">' + SITE.instagram + '</a></span>';
+  var bits = [];
+  if (SITE.place)   bits.push('<span>' + SITE.place + '</span>');
+  if (SITE.email)   bits.push('<span><a href="mailto:' + SITE.email + '">' + SITE.email + '</a></span>');
+  if (SITE.phone)   bits.push('<span><a href="tel:' + SITE.phone.replace(/\s/g, "") + '">' + SITE.phone + '</a></span>');
+  if (SITE.instagram) bits.push('<span>' + SITE.instagram + '</span>');
+  document.getElementById("contact").innerHTML = bits.join("");
+
+  var ig = document.getElementById("igBtn");
+  if (SITE.instagramUrl) {
+    ig.href = SITE.instagramUrl;
+    ig.textContent = SITE.instagramLabel || "Instagram";
+  } else {
+    ig.remove();
+  }
 
   document.getElementById("footName").textContent = SITE.name;
   document.getElementById("footYear").textContent = "© " + new Date().getFullYear();
@@ -74,8 +87,8 @@
 
     li.innerHTML =
       '<a class="card-link" href="album.html?a=' + encodeURIComponent(album.slug) + '">' +
-        '<span class="frame">' +
-          '<img src="' + album.cover + '" alt="Cover photo for ' + album.title + '" loading="lazy">' +
+        '<span class="frame protect">' +
+          '<img src="' + album.cover + '" alt="Cover photo for ' + album.title + '" loading="lazy" draggable="false">' +
         '</span>' +
         '<span class="card-meta">' +
           '<span class="card-no">' + pad(i + 1) + '</span>' +
@@ -94,6 +107,14 @@
     });
 
     grid.appendChild(li);
+  });
+
+  // Зураг хуулбарлахаас сэргийлэх энгийн хамгаалалт
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target.closest(".protect")) e.preventDefault();
+  });
+  document.addEventListener("dragstart", function (e) {
+    if (e.target.closest(".protect")) e.preventDefault();
   });
 })();
 </script>

@@ -110,6 +110,12 @@ a { color: inherit; }
   font-size: 1.05rem;
 }
 
+.contact-block {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: end;
+}
+
 .contact {
   display: grid;
   gap: 0.3rem;
@@ -118,6 +124,46 @@ a { color: inherit; }
 
 .contact a { text-decoration: none; border-bottom: 1px solid var(--rule); }
 .contact a:hover { border-color: var(--safelight); color: var(--safelight); }
+
+.ig-btn {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 0.6rem 1.05rem;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.ig-btn:hover,
+.ig-btn:focus-visible {
+  background: var(--safelight);
+  border-color: var(--safelight);
+  color: #fff;
+}
+
+/* --- зураг хуулбарлахаас сэргийлэх ---------------------------------------- */
+
+.protect { position: relative; }
+
+.protect img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+/* зургийн дээгүүр ил тод давхарга — удаан дарж хадгалахыг хаана */
+.protect::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
 
 /* --- album grid (home) ---------------------------------------------------- */
 
@@ -346,6 +392,7 @@ a { color: inherit; }
 
 @media (max-width: 34rem) {
   .contact { text-align: left; }
+  .contact-block { justify-items: start; }
   .plate { grid-template-columns: 1fr; }
   .plate-no { grid-column: 1; }
   .plate figcaption { grid-column: 1; }
