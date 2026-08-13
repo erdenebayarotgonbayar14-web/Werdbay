@@ -2,6 +2,13 @@
   publish = "."
   functions = "netlify/functions"
 
+# /api/github → функц рүү. Netlify-н хувилбараас үл хамааран ажиллана.
+[[redirects]]
+  from = "/api/github"
+  to = "/.netlify/functions/github"
+  status = 200
+  force = true
+
 # Админ хуудсыг хайлтын системд индекслүүлэхгүй
 [[headers]]
   for = "/admin.html"

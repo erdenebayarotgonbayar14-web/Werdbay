@@ -216,7 +216,9 @@ input:focus, textarea:focus { outline: 2px solid var(--safelight); outline-offse
 (function () {
 "use strict";
 
-var API = "/api/github";
+/* Хоёр замыг хоёуланг нь оролдоно — Netlify-н тохиргооноос хамаарч аль нэг нь ажиллана */
+var ENDPOINTS = ["/api/github", "/.netlify/functions/github"];
+var API = null;
 var MAX_BYTES = 2 * 1024 * 1024;   // 2 МБ
 
 var pass = "";
@@ -299,15 +301,42 @@ async function prepare(file, hardMaxSide) {
 /* ---------- сервертэй ярих ------------------------------------------------ */
 async function call(payload) {
   payload.password = pass;
-  var res = await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  var data = null;
-  try { data = await res.json(); } catch (e) {}
-  if (!res.ok) throw new Error((data && data.error) || ("Алдаа " + res.status));
-  return data;
+  var urls = API ? [API] : ENDPOINTS;
+
+  for (var i = 0; i < urls.length; i++) {
+    var res;
+    try {
+      res = await fetch(urls[i], {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {
+      throw new Error("Сүлжээний алдаа: " + e.message);
+    }
+
+    // 404 = энэ хаяг дээр функц алга. Дараагийнхыг оролдоно.
+    if (res.status === 404 && !API) continue;
+
+    var data = null;
+    try { data = await res.json(); } catch (e) {}
+
+    if (res.status === 404) {
+      throw new Error("Функц олдсонгүй (404). netlify/functions/github.mjs deploy " +
+                      "болсон эсэх, netlify.toml дотор functions зам зөв эсэхийг шалгана уу.");
+    }
+    if (!res.ok) throw new Error((data && data.error) || ("Алдаа " + res.status));
+
+    API = urls[i];          // ажилласан хаягийг цээжилнэ
+    return data;
+  }
+
+  throw new Error("Серверийн функц олдсонгүй (404).\n" +
+    "Шалгах зүйлс:\n" +
+    "  1. netlify/functions/github.mjs файл repo дээр байгаа эсэх\n" +
+    "  2. netlify.toml дотор functions = \"netlify/functions\" гэж бичсэн эсэх\n" +
+    "  3. Netlify → Deploys → сүүлийн deploy → Functions хэсэгт github гэж харагдаж байгаа эсэх\n" +
+    "  4. Environment variables нэмсний дараа дахин deploy хийсэн эсэх");
 }
 
 function parseDataJs(src) {

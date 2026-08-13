@@ -45,9 +45,9 @@
 <script>
 (function () {
   // ---- masthead -----------------------------------------------------------
-  document.getElementById("wordmark").textContent = SITE.name;
-  document.getElementById("intro").textContent = SITE.intro;
-  document.title = SITE.name + " — " + SITE.role;
+  document.getElementById("wordmark").textContent = SITE.name || "Portfolio";
+  document.getElementById("intro").textContent = SITE.intro || "";
+  document.title = (SITE.name || "Portfolio") + (SITE.role ? " — " + SITE.role : "");
 
   var bits = [];
   if (SITE.place)   bits.push('<span>' + SITE.place + '</span>');
@@ -76,8 +76,8 @@
 
   if (!ALBUMS.length) {
     grid.innerHTML =
-      '<li class="notice"><h1>No albums yet</h1>' +
-      '<p>Open <code>data.js</code> and add your first album.</p></li>';
+      '<li class="notice"><h1>New work coming soon</h1>' +
+      '<p>Albums will appear here.</p></li>';
     return;
   }
 
