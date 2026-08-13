@@ -1,57 +1,75 @@
-# Portfolio site
+# Портфолио сайт — гарын авлага
 
-Four files, no build step, no server code. Works on any static host
-(GitHub Pages, Netlify, Cloudflare Pages, or ordinary shared hosting).
+Сервер, өгөгдлийн сан шаардлагагүй. GitHub Pages дээр шууд ажиллана.
 
 ```
-index.html        home page — the album grid
-album.html        one album — photos with captions beside them
-data.js           ← the only file you edit
-style.css         all styling
-photos/           your images
+index.html    нүүр хуудас — төслүүдийн жагсаалт
+album.html    нэг төслийн хуудас — зураг + тайлбар
+admin.html    админ хэсэг — төсөл, зураг оруулах
+data.js       бүх мэдээлэл (админ автоматаар бичдэг)
+style.css     загвар
+photos/       зурагнууд (админ автоматаар үүсгэдэг)
 ```
 
-## First setup
+## 1. Эхний тохиргоо
 
-1. Open `data.js` and edit the `SITE` block: name, email, Instagram, intro line.
-2. Create a folder per album inside `photos/`, for example `photos/khangai-winter/`.
-3. Put a `cover.jpg` and your numbered photos in it.
-4. Upload everything to your domain's web root.
+1. GitHub дээр шинэ repo үүсгэ (жишээ нь `portfolio`).
+2. Дээрх файлуудыг тэр repo-д байрлуул.
+3. Settings → Pages → Source: `Deploy from a branch`, салбар `main`, хавтас `/ (root)`.
+4. Хэдэн минутын дараа сайт `https://<нэр>.github.io/portfolio/` хаягаар нээгдэнэ.
+5. Өөрийн домэйн залгах бол Settings → Pages → Custom domain хэсэгт бичнэ.
 
-Until real photos exist, each image slot shows a grey box with the exact file
-path it is looking for — useful for checking your folder names.
+## 2. Токен үүсгэх (нэг удаа)
 
-## Adding a new album
+Админ хэсэг GitHub руу файл бичихийн тулд токен хэрэгтэй.
 
-In `data.js`, copy one `{ ... }` block and change these values:
+GitHub → Settings → Developer settings → Personal access tokens →
+**Fine-grained tokens** → Generate new token:
 
-```js
-{
-  slug: "new-album",                     // folder name + web address
-  title: "New Album",                    // shown under the cover photo
-  year: "2026",
-  place: "Khentii",
-  cover: "photos/new-album/cover.jpg",
-  description: "The main description shown at the top of the album page.",
-  photos: [
-    { src: "photos/new-album/01.jpg", caption: "Caption shown beside this photo." },
-    { src: "photos/new-album/02.jpg", caption: "" }   // empty = no caption
-  ]
-}
-```
+- Repository access: зөвхөн энэ repo
+- Permissions → Repository permissions → **Contents: Read and write**
+- Хугацааг өөрийн үзэмжээр (жишээ нь 90 хоног)
 
-That is the whole job — the grid, the photo count, the frame numbers and the
-album page all update themselves. Albums appear in the order they are listed,
-so put the newest one first.
+Гарч ирсэн `github_pat_...` мөрийг хуулж ав.
 
-## Image sizes
+> **Анхаар:** энэ токен бол түлхүүр. Хэн нэгэнд илгээж болохгүй, чатад ч бичиж
+> болохгүй. Зөвхөн `admin.html` хуудасны талбарт өөрөө бичнэ. Хуудсыг хаахад
+> санах ойноос устдаг тул орох болгондоо дахин буулгана.
 
-Export covers around 1600px on the long edge and full photos around 2400px,
-JPEG quality 80. Anything larger just slows the page down.
+## 3. Админ хэсгийг ашиглах
 
-## Nicer web addresses (optional)
+`https://<таны сайт>/admin.html` хаягаар нээнэ.
 
-Albums live at `yourdomain.com/album.html?a=new-album`. If you would rather
-have `yourdomain.com/albums/new-album/`, make a folder per album containing a
-copy of `album.html` and hard-code the slug instead of reading it from the URL.
-More upkeep, prettier links.
+1. **Холболт** — owner (GitHub нэр), repo нэр, branch (`main`), токен бичээд
+   *Холбогдох* дар. Одоогийн `data.js` уншигдана.
+2. **Сайтын мэдээлэл** — нэр, и-мэйл, Instagram, танилцуулга мөр.
+3. **Төслүүд** — *+ Шинэ төсөл* дарж нэмнэ. Нэр, он, газар, **тайлбар**
+   бичээд нүүр зураг сонгоно. Тайлбар нь төслийн хуудасны дээд талд гарна.
+4. **Зурагнууд** — *Зураг нэмэх* дарж олон зураг зэрэг сонгоно. Зураг бүрийн
+   хажууд тайлбар бичих нүд байна (хоосон орхиж болно). Сум товчоор дараалал
+   солино.
+5. Доод талын **GitHub рүү хадгалах** товчийг дарна. Зургууд `photos/<slug>/`
+   хавтас руу хуулагдаж, `data.js` шинэчлэгдэнэ. 1–2 минутын дараа сайт дээр
+   гарч ирнэ.
+
+Зургийг хуулахын өмнө хөтөч дээр автоматаар багасгадаг (урт тал 2400px,
+нүүр зураг 1600px, JPEG). Тиймээс камерын том файлыг шууд сонгож болно.
+
+## 4. Санах зүйлс
+
+- `admin.html` нь нийтэд харагдана, гэхдээ токенгүй бол хэн ч юу ч өөрчилж
+  чадахгүй. Хэрэв огт харагдуулахгүй бол админыг зөвхөн компьютер дээрээ
+  ажиллуулаад (жишээ нь `python3 -m http.server`) GitHub-д байршуулахгүй байж
+  болно.
+- Төслийг жагсаалтаас хассан ч зургийн файлууд repo дээр үлдэнэ. Хэрэгтэй бол
+  GitHub дээрээс гараар устгана.
+- `data.js`-ийг гараар засаж болно, гэхдээ дараагийн удаа админаас хадгалахад
+  дарагдана.
+- Хадгалаагүй зураг байхад хуудсыг хаах гэвэл хөтөч сануулна.
+
+## 5. Гоё хаяг (сонголт)
+
+Одоогоор төслийн хаяг `таны-домэйн/album.html?a=<slug>` хэлбэртэй. Хэрэв
+`таны-домэйн/albums/<slug>/` шиг байлгах бол төсөл бүрт хавтас үүсгээд
+`album.html`-ийн хуулбарыг хийж, slug-ийг хатуу бичих хэрэгтэй. Ажил нэмэгдэх
+тул одоохондоо ингэхийг зөвлөхгүй.
