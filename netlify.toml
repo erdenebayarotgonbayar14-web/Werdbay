@@ -1,8 +1,16 @@
 [build]
   publish = "."
-  functions = "netlify/functions"
+  command = ""
 
-# /api/github → функц рүү. Netlify-н хувилбараас үл хамааран ажиллана.
+# Функцийн хавтас — хоёр түлхүүрийг хоёуланг нь бичив (хувилбар бүрт ажиллана)
+[build.environment]
+  NODE_VERSION = "18"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# /api/github → функц рүү
 [[redirects]]
   from = "/api/github"
   to = "/.netlify/functions/github"
@@ -16,7 +24,7 @@
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "no-store"
 
-# Зургийг удаан хугацаагаар кэшлэнэ (нэр нь давтагдахгүй тул аюулгүй)
+# Зургийг удаан хугацаагаар кэшлэнэ (нэр давтагдахгүй тул аюулгүй)
 [[headers]]
   for = "/photos/*"
   [headers.values]
